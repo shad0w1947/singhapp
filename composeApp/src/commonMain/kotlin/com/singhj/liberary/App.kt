@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.russhwolf.settings.Settings
 
 sealed class Screen {
     object Splash : Screen()
@@ -25,14 +26,22 @@ sealed class Screen {
 fun App() {
     MaterialTheme {
         var currentScreen by remember { mutableStateOf<Screen>(Screen.Splash) }
+        val settings = remember { Settings() }
+        val settingsRepository = remember { SettingsRepository(settings) }
         val authRepository = remember { AuthRepository() }
-        val authViewModel = remember { AuthViewModel(authRepository) }
+        val authViewModel = remember { AuthViewModel(authRepository, settingsRepository) }
 
         when (currentScreen) {
             is Screen.Splash -> {
                 SplashScreen()
+                val authState by authViewModel.authState.collectAsState()
                 LaunchedEffect(Unit) {
-                    currentScreen = Screen.Auth
+                    authViewModel.checkForExistingToken()
+                }
+                when (authState) {
+                    is AuthState.Success -> currentScreen = Screen.Main
+                    is AuthState.Error -> currentScreen = Screen.Auth
+                    else -> {}
                 }
             }
             is Screen.Auth -> {
