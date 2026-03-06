@@ -89,11 +89,11 @@ fun AnnouncementsSection(onClick: () -> Unit) {
         .clickable(onClick = onClick)) {
         Text("Announcements", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(8.dp))
-        // Placeholder for a tab view or horizontal pager
+        // Placeholder with aspect ratio for responsiveness
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp)
+                .aspectRatio(16f / 9f) // Responsive height
                 .background(Color.LightGray, shape = RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center
         ) {
@@ -117,19 +117,23 @@ fun PerformanceSummary(onClick: () -> Unit) {
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Placeholder for chart
+                // Responsive placeholder for chart
                 Box(
                     modifier = Modifier
-                        .size(100.dp)
+                        .fillMaxWidth(0.4f) // Takes 40% of the card width
+                        .aspectRatio(1f) // Square shape
                         .background(Color.LightGray, shape = RoundedCornerShape(8.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text("Chart")
                 }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text("Recent Test Score", style = MaterialTheme.typography.bodyLarge)
                     Text("75%", fontSize = 36.sp, fontWeight = FontWeight.Bold)
                 }
@@ -143,10 +147,14 @@ fun PerformanceSummary(onClick: () -> Unit) {
 fun FeesStatusCard(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Card(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.aspectRatio(1f), // Make card square
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp).fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             Text("Fees Status", style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
             Text("Status: Paid", style = MaterialTheme.typography.bodyMedium)
@@ -163,13 +171,17 @@ fun FeesStatusCard(modifier: Modifier = Modifier, onClick: () -> Unit) {
 fun LibrarySubscriptionCard(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Card(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.aspectRatio(1f), // Make card square
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp).fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             Text("Library Subscription", style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Status: Active (12 days)", style = MaterialTheme.typography.bodyMedium)
+            Text("Status: Active", style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = { /* Button click can be different from card click */ }) {
                 Text("Renew/Manage")
