@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainContent() {
+fun MainContent(onProfileClick: () -> Unit) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -54,7 +54,7 @@ fun MainContent() {
                 contentDescription = "Profile Icon",
                 modifier = Modifier
                     .size(40.dp)
-                    .clickable { /* TODO: Handle profile click */ }
+                    .clickable(onClick = onProfileClick)
             )
         }
 

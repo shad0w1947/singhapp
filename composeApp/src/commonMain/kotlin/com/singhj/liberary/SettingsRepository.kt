@@ -1,19 +1,36 @@
 package com.singhj.liberary
 
 import com.russhwolf.settings.Settings
+import com.russhwolf.settings.get
 import com.russhwolf.settings.set
+
+enum class Theme {
+    LIGHT, DARK, SYSTEM
+}
 
 class SettingsRepository(private val settings: Settings) {
 
-    fun saveToken(token: String) {
-        settings["auth_token"] = token
+    fun saveAuthToken(token: String) {
+        settings["authToken"] = token
     }
 
-    fun getToken(): String? {
-        return settings.getStringOrNull("auth_token")
+    fun getAuthToken(): String? {
+        return settings["authToken"]
     }
 
-    fun clearToken() {
-        settings.remove("auth_token")
+    fun clearAuthToken() {
+        settings.remove("authToken")
+    }
+
+    fun saveTheme(theme: Theme) {
+        settings["theme"] = theme.name
+    }
+
+    fun getTheme(): Theme {
+        return when (settings.getStringOrNull("theme")) {
+            Theme.LIGHT.name -> Theme.LIGHT
+            Theme.DARK.name -> Theme.DARK
+            else -> Theme.SYSTEM
+        }
     }
 }

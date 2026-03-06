@@ -1,11 +1,13 @@
 package com.singhj.liberary
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,18 +18,29 @@ sealed class Screen {
     object Splash : Screen()
     object Auth : Screen()
     object Main : Screen()
+    object Profile : Screen()
 }
 
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
+    val settings = remember { Settings() }
+    val settingsRepository = remember { SettingsRepository(settings) }
+    val theme by remember { mutableStateOf(settingsRepository.getTheme()) }
+
+    val isDarkTheme = when (theme) {
+        Theme.LIGHT -> false
+        Theme.DARK -> true
+        Theme.SYSTEM -> isSystemInDarkTheme()
+    }
+
+    val colorScheme = if (isDarkTheme) darkColorScheme() else lightColorScheme()
+
+    MaterialTheme(colorScheme = colorScheme) {
         // Set system bars to be transparent at the app level
         SetSystemBarsTransparent()
 
         var currentScreen by remember { mutableStateOf<Screen>(Screen.Splash) }
-        val settings = remember { Settings() }
-        val settingsRepository = remember { SettingsRepository(settings) }
         val authRepository = remember { AuthRepository() }
         val authViewModel = remember { AuthViewModel(authRepository, settingsRepository) }
 
@@ -51,7 +64,13 @@ fun App() {
                 )
             }
             is Screen.Main -> {
-                MainContent()
+                MainContent(onProfileClick = { currentScreen = Screen.Profile })
+            }
+            is Screen.Profile -> {
+                ProfileScreen(
+                    settingsRepository = settingsRepository,
+                    onNavigateBack = { currentScreen = Screen.Main }
+                )
             }
         }
     }

@@ -1,0 +1,77 @@
+package com.singhj.liberary
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProfileScreen(
+    settingsRepository: SettingsRepository,
+    onNavigateBack: () -> Unit
+) {
+    var selectedTheme by remember { mutableStateOf(settingsRepository.getTheme()) }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Profile") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text("User Name", style = MaterialTheme.typography.titleLarge)
+            Text("user.name@email.com", style = MaterialTheme.typography.bodyMedium)
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text("Theme", style = MaterialTheme.typography.titleMedium)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    selected = selectedTheme == Theme.LIGHT,
+                    onClick = {
+                        selectedTheme = Theme.LIGHT
+                        settingsRepository.saveTheme(Theme.LIGHT)
+                    }
+                )
+                Text("Light")
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    selected = selectedTheme == Theme.DARK,
+                    onClick = {
+                        selectedTheme = Theme.DARK
+                        settingsRepository.saveTheme(Theme.DARK)
+                    }
+                )
+                Text("Dark")
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    selected = selectedTheme == Theme.SYSTEM,
+                    onClick = {
+                        selectedTheme = Theme.SYSTEM
+                        settingsRepository.saveTheme(Theme.SYSTEM)
+                    }
+                )
+                Text("System")
+            }
+        }
+    }
+}
