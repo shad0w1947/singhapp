@@ -20,8 +20,11 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(
+    viewModel: MainViewModel,
     onProfileClick: () -> Unit
 ) {
+    val feesState by viewModel.feesState.collectAsState()
+
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -70,14 +73,14 @@ fun MainContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         // Dashboard Section
-        DashboardSection()
+        DashboardSection(feesState)
         
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
 @Composable
-fun DashboardSection() {
+fun DashboardSection(feesState: FeesState) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -90,7 +93,10 @@ fun DashboardSection() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            FeesStatusCard(modifier = Modifier.weight(1f)) { /* Handle fees card click */ }
+            FeesStatusCard(
+                state = feesState,
+                modifier = Modifier.weight(1f)
+            ) { /* Handle fees card click */ }
             Spacer(modifier = Modifier.width(16.dp))
             LibrarySubscriptionCard(modifier = Modifier.weight(1f)) { /* Handle library card click */ }
         }
@@ -188,7 +194,11 @@ fun PerformanceSummary(onClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeesStatusCard(modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun FeesStatusCard(
+    state: FeesState,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Card(
         onClick = onClick,
         modifier = modifier.aspectRatio(1f),
@@ -210,14 +220,37 @@ fun FeesStatusCard(modifier: Modifier = Modifier, onClick: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                "Status: Paid",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+
+            when (state) {
+                is FeesState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                }
+                is FeesState.Success -> {
+                    Text(
+                        "Status: ${state.response.status}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (state.response.status.contains("Paid", ignoreCase = true)) Color.Green else Color.Red
+                    )
+                    state.response.amount?.let {
+                        Text("Amount: $it", style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+                is FeesState.Error -> {
+                    Text(
+                        "Error",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { /* Action */ }) {
-                Text("Pay Now")
+            Button(
+                onClick = { /* Action */ },
+                modifier = Modifier.height(36.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+            ) {
+                Text("Pay Now", fontSize = 12.sp)
             }
         }
     }
@@ -253,8 +286,12 @@ fun LibrarySubscriptionCard(modifier: Modifier = Modifier, onClick: () -> Unit) 
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { /* Action */ }) {
-                Text("Renew")
+            Button(
+                onClick = { /* Action */ },
+                modifier = Modifier.height(36.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+            ) {
+                Text("Renew", fontSize = 12.sp)
             }
         }
     }

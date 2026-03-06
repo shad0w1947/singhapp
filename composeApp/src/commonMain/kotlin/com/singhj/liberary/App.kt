@@ -36,6 +36,11 @@ fun App() {
 
         val authRepository = remember { AuthRepository() }
         val authViewModel = remember { AuthViewModel(authRepository, settingsRepository) }
+        
+        // Initialize Fees Repository and ViewModel for Main Screen
+        val feesRepository = remember { FeesRepository(settingsRepository) }
+        val mainViewModel = remember { MainViewModel(feesRepository) }
+
         var currentScreen by remember { mutableStateOf<Screen>(Screen.Splash) }
         val authState by authViewModel.authState.collectAsState()
 
@@ -60,11 +65,15 @@ fun App() {
             is Screen.Auth -> {
                 AuthScreen(
                     authViewModel = authViewModel,
-                    onLoginSuccess = { currentScreen = Screen.Main }
+                    onLoginSuccess = { 
+                        currentScreen = Screen.Main
+                        mainViewModel.fetchFeesStatus() // Refresh fees on login
+                    }
                 )
             }
             is Screen.Main -> {
                 MainContent(
+                    viewModel = mainViewModel,
                     onProfileClick = { currentScreen = Screen.Profile }
                 )
             }
