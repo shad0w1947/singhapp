@@ -24,4 +24,9 @@ class AuthViewModel(
             _authState.value = AuthState.Error("No token found")
         }
     }
+
+    fun login(token: String) {
+        settingsRepository.saveAuthToken(token)
+        _authState.value = AuthState.Success
+    }
 }
