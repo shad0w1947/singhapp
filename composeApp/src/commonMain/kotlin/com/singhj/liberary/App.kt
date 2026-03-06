@@ -26,7 +26,7 @@ sealed class Screen {
 fun App() {
     val settings = remember { Settings() }
     val settingsRepository = remember { SettingsRepository(settings) }
-    val theme by remember { mutableStateOf(settingsRepository.getTheme()) }
+    var theme by remember { mutableStateOf(settingsRepository.getTheme()) }
 
     val isDarkTheme = when (theme) {
         Theme.LIGHT -> false
@@ -69,7 +69,8 @@ fun App() {
             is Screen.Profile -> {
                 ProfileScreen(
                     settingsRepository = settingsRepository,
-                    onNavigateBack = { currentScreen = Screen.Main }
+                    onNavigateBack = { currentScreen = Screen.Main },
+                    onThemeChanged = { newTheme -> theme = newTheme }
                 )
             }
         }
