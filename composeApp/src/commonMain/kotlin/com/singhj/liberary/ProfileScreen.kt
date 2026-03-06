@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
+    authViewModel: AuthViewModel,
     settingsRepository: SettingsRepository,
     onNavigateBack: () -> Unit,
     onThemeChanged: (Theme) -> Unit
@@ -75,6 +76,16 @@ fun ProfileScreen(
                     }
                 )
                 Text("System")
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                onClick = { authViewModel.logout() },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+            ) {
+                Text("Logout", color = MaterialTheme.colorScheme.onError)
             }
         }
     }

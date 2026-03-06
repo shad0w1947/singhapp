@@ -28,26 +28,26 @@ fun App() {
     val settingsRepository = remember { SettingsRepository(settings) }
     var theme by remember { mutableStateOf(settingsRepository.getTheme()) }
 
-    val isDarkTheme = when (theme) {
-        Theme.LIGHT -> false
-        Theme.DARK -> true
-        Theme.SYSTEM -> isSystemInDarkTheme()
-    }
-
+    val isDarkTheme = if (theme == Theme.SYSTEM) isSystemInDarkTheme() else theme == Theme.DARK
     val colorScheme = if (isDarkTheme) darkColorScheme() else lightColorScheme()
 
     MaterialTheme(colorScheme = colorScheme) {
-        // Set system bars to be transparent at the app level
         SetSystemBarsTransparent()
 
-        var currentScreen by remember { mutableStateOf<Screen>(Screen.Splash) }
         val authRepository = remember { AuthRepository() }
         val authViewModel = remember { AuthViewModel(authRepository, settingsRepository) }
+        var currentScreen by remember { mutableStateOf<Screen>(Screen.Splash) }
+        val authState by authViewModel.authState.collectAsState()
+
+        LaunchedEffect(authState) {
+            if (authState is AuthState.LoggedOut) {
+                currentScreen = Screen.Auth
+            }
+        }
 
         when (currentScreen) {
             is Screen.Splash -> {
                 SplashScreen()
-                val authState by authViewModel.authState.collectAsState()
                 LaunchedEffect(Unit) {
                     authViewModel.checkForExistingToken()
                 }
@@ -64,10 +64,13 @@ fun App() {
                 )
             }
             is Screen.Main -> {
-                MainContent(onProfileClick = { currentScreen = Screen.Profile })
+                MainContent(
+                    onProfileClick = { currentScreen = Screen.Profile }
+                )
             }
             is Screen.Profile -> {
                 ProfileScreen(
+                    authViewModel = authViewModel,
                     settingsRepository = settingsRepository,
                     onNavigateBack = { currentScreen = Screen.Main },
                     onThemeChanged = { newTheme -> theme = newTheme }

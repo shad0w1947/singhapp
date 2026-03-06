@@ -3,16 +3,12 @@ package com.singhj.liberary
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,81 +19,111 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainContent(onProfileClick: () -> Unit) {
+fun MainContent(
+    onProfileClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
-            .systemBarsPadding() // Add padding for status bar
-            .padding(horizontal = 16.dp), // Keep horizontal padding
+            .systemBarsPadding()
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Header
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Company Logo Placeholder
             Icon(
-                imageVector = Icons.Default.AccountCircle, // Replace with your logo
+                imageVector = Icons.Default.AccountCircle,
                 contentDescription = "Company Logo",
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(40.dp),
+                tint = MaterialTheme.colorScheme.onBackground
             )
 
-            Text("Coaching/Library Logo", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Coaching/Library Hub",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
 
-            // Profile Icon
             Icon(
                 imageVector = Icons.Default.AccountCircle,
                 contentDescription = "Profile Icon",
                 modifier = Modifier
                     .size(40.dp)
-                    .clickable(onClick = onProfileClick)
+                    .clickable(onClick = onProfileClick),
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Announcements
-        AnnouncementsSection { /* TODO: Handle announcement click */ }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Performance Summary
-        PerformanceSummary { /* TODO: Handle performance summary click */ }
+        // Announcements Section
+        AnnouncementsSection { /* Handle click */ }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Fees and Library Subscription
+        // Dashboard Section
+        DashboardSection()
+        
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+fun DashboardSection() {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        PerformanceSummary { /* Handle performance summary click */ }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            FeesStatusCard(modifier = Modifier.weight(1f)) { /* TODO: Handle fees card click */ }
+            FeesStatusCard(modifier = Modifier.weight(1f)) { /* Handle fees card click */ }
             Spacer(modifier = Modifier.width(16.dp))
-            LibrarySubscriptionCard(modifier = Modifier.weight(1f)) { /* TODO: Handle library card click */ }
+            LibrarySubscriptionCard(modifier = Modifier.weight(1f)) { /* Handle library card click */ }
         }
     }
 }
 
 @Composable
 fun AnnouncementsSection(onClick: () -> Unit) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .clickable(onClick = onClick)) {
-        Text("Announcements", style = MaterialTheme.typography.titleLarge)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+    ) {
+        Text(
+            "Latest Announcements",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
         Spacer(modifier = Modifier.height(8.dp))
-        // Placeholder with aspect ratio for responsiveness
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(16f / 9f) // Responsive height
-                .background(Color.LightGray, shape = RoundedCornerShape(8.dp)),
+                .aspectRatio(16f / 9f)
+                .background(
+                    MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(8.dp)
+                ),
             contentAlignment = Alignment.Center
         ) {
-            Text("Upcoming Test Schedule / New Library Books", color = Color.Black)
+            Text(
+                "Upcoming Test Schedule / New Library Books",
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
@@ -106,11 +132,18 @@ fun AnnouncementsSection(onClick: () -> Unit) {
 @Composable
 fun PerformanceSummary(onClick: () -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text("Performance Summary", style = MaterialTheme.typography.titleLarge)
+        Text(
+            "Performance Summary",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Card(
             onClick = onClick,
             modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Row(
@@ -119,23 +152,34 @@ fun PerformanceSummary(onClick: () -> Unit) {
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Responsive placeholder for chart
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.4f) // Takes 40% of the card width
-                        .aspectRatio(1f) // Square shape
-                        .background(Color.LightGray, shape = RoundedCornerShape(8.dp)),
+                        .fillMaxWidth(0.4f)
+                        .aspectRatio(1f)
+                        .background(
+                            MaterialTheme.colorScheme.secondaryContainer,
+                            shape = RoundedCornerShape(8.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Chart")
+                    Text("Chart", color = MaterialTheme.colorScheme.onSecondaryContainer)
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Recent Test Score", style = MaterialTheme.typography.bodyLarge)
-                    Text("75%", fontSize = 36.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Recent Test Score",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        "75%",
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         }
@@ -147,19 +191,32 @@ fun PerformanceSummary(onClick: () -> Unit) {
 fun FeesStatusCard(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Card(
         onClick = onClick,
-        modifier = modifier.aspectRatio(1f), // Make card square
+        modifier = modifier.aspectRatio(1f),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp).fillMaxSize(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("Fees Status", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Fees Status",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Status: Paid", style = MaterialTheme.typography.bodyMedium)
+            Text(
+                "Status: Paid",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { /* Button click can be different from card click */ }) {
+            Button(onClick = { /* Action */ }) {
                 Text("Pay Now")
             }
         }
@@ -171,20 +228,33 @@ fun FeesStatusCard(modifier: Modifier = Modifier, onClick: () -> Unit) {
 fun LibrarySubscriptionCard(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Card(
         onClick = onClick,
-        modifier = modifier.aspectRatio(1f), // Make card square
+        modifier = modifier.aspectRatio(1f),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp).fillMaxSize(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("Library Subscription", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Library Subscription",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Status: Active", style = MaterialTheme.typography.bodyMedium)
+            Text(
+                "Status: Active",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { /* Button click can be different from card click */ }) {
-                Text("Renew/Manage")
+            Button(onClick = { /* Action */ }) {
+                Text("Renew")
             }
         }
     }

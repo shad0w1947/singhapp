@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 sealed class AuthState {
     object Loading : AuthState()
     object Success : AuthState()
+    object LoggedOut : AuthState()
     data class Error(val message: String) : AuthState()
 }
 
@@ -28,5 +29,10 @@ class AuthViewModel(
     fun login(token: String) {
         settingsRepository.saveAuthToken(token)
         _authState.value = AuthState.Success
+    }
+
+    fun logout() {
+        settingsRepository.clearAuthToken()
+        _authState.value = AuthState.LoggedOut
     }
 }
