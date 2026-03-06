@@ -22,6 +22,9 @@ sealed class Screen {
 @Preview
 fun App() {
     MaterialTheme {
+        // Set system bars to be transparent at the app level
+        SetSystemBarsTransparent()
+
         var currentScreen by remember { mutableStateOf<Screen>(Screen.Splash) }
         val settings = remember { Settings() }
         val settingsRepository = remember { SettingsRepository(settings) }
