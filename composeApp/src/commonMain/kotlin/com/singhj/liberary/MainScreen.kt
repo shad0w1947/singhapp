@@ -1,6 +1,7 @@
 package com.singhj.liberary
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,13 +21,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent() {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
-            .padding(16.dp),
+            .systemBarsPadding() // Add padding for status bar
+            .padding(horizontal = 16.dp), // Keep horizontal padding
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Header
@@ -48,19 +52,21 @@ fun MainContent() {
             Icon(
                 imageVector = Icons.Default.AccountCircle,
                 contentDescription = "Profile Icon",
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier
+                    .size(40.dp)
+                    .clickable { /* TODO: Handle profile click */ }
             )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // Announcements
-        AnnouncementsSection()
+        AnnouncementsSection { /* TODO: Handle announcement click */ }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // Performance Summary
-        PerformanceSummary()
+        PerformanceSummary { /* TODO: Handle performance summary click */ }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -69,16 +75,18 @@ fun MainContent() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            FeesStatusCard(modifier = Modifier.weight(1f))
+            FeesStatusCard(modifier = Modifier.weight(1f)) { /* TODO: Handle fees card click */ }
             Spacer(modifier = Modifier.width(16.dp))
-            LibrarySubscriptionCard(modifier = Modifier.weight(1f))
+            LibrarySubscriptionCard(modifier = Modifier.weight(1f)) { /* TODO: Handle library card click */ }
         }
     }
 }
 
 @Composable
-fun AnnouncementsSection() {
-    Column(modifier = Modifier.fillMaxWidth()) {
+fun AnnouncementsSection(onClick: () -> Unit) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .clickable(onClick = onClick)) {
         Text("Announcements", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(8.dp))
         // Placeholder for a tab view or horizontal pager
@@ -94,17 +102,21 @@ fun AnnouncementsSection() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PerformanceSummary() {
+fun PerformanceSummary(onClick: () -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text("Performance Summary", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(8.dp))
         Card(
+            onClick = onClick,
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Row(
-                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -126,9 +138,11 @@ fun PerformanceSummary() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeesStatusCard(modifier: Modifier = Modifier) {
+fun FeesStatusCard(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Card(
+        onClick = onClick,
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -137,16 +151,18 @@ fun FeesStatusCard(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(8.dp))
             Text("Status: Paid", style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { /* TODO */ }) {
+            Button(onClick = { /* Button click can be different from card click */ }) {
                 Text("Pay Now")
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibrarySubscriptionCard(modifier: Modifier = Modifier) {
+fun LibrarySubscriptionCard(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Card(
+        onClick = onClick,
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -155,7 +171,7 @@ fun LibrarySubscriptionCard(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(8.dp))
             Text("Status: Active (12 days)", style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { /* TODO */ }) {
+            Button(onClick = { /* Button click can be different from card click */ }) {
                 Text("Renew/Manage")
             }
         }
