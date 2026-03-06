@@ -2,6 +2,7 @@ package com.singhj.liberary
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,6 +25,9 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent() {
+    // Set system bars to be transparent
+    SetSystemBarsTransparent()
+
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -189,3 +193,6 @@ fun LibrarySubscriptionCard(modifier: Modifier = Modifier, onClick: () -> Unit) 
         }
     }
 }
+
+@Composable
+expect fun SetSystemBarsTransparent()
