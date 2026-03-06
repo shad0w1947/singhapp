@@ -13,7 +13,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ProfileScreen(
     settingsRepository: SettingsRepository,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onThemeChanged: (Theme) -> Unit
 ) {
     var selectedTheme by remember { mutableStateOf(settingsRepository.getTheme()) }
 
@@ -48,6 +49,7 @@ fun ProfileScreen(
                     onClick = {
                         selectedTheme = Theme.LIGHT
                         settingsRepository.saveTheme(Theme.LIGHT)
+                        onThemeChanged(Theme.LIGHT)
                     }
                 )
                 Text("Light")
@@ -58,6 +60,7 @@ fun ProfileScreen(
                     onClick = {
                         selectedTheme = Theme.DARK
                         settingsRepository.saveTheme(Theme.DARK)
+                        onThemeChanged(Theme.DARK)
                     }
                 )
                 Text("Dark")
@@ -68,6 +71,7 @@ fun ProfileScreen(
                     onClick = {
                         selectedTheme = Theme.SYSTEM
                         settingsRepository.saveTheme(Theme.SYSTEM)
+                        onThemeChanged(Theme.SYSTEM)
                     }
                 )
                 Text("System")
